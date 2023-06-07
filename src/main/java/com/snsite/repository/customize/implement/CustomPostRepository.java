@@ -20,9 +20,9 @@ public class CustomPostRepository implements ICustomPostRepository {
 	public List<PostEntity> findAllWithFriendShip(Long userId) {
 		List<PostEntity> postEntities = null;
 		try {
-			Query query = entityManager
-					.createNativeQuery("select * from posts where shared_type=?0 or shared_type=?1", PostEntity.class)
-					.unwrap(org.hibernate.query.Query.class);
+			Query query = entityManager.createNativeQuery(
+					"select * from posts where shared_type=?0 or shared_type=?1 order by updated_at DESC",
+					PostEntity.class).unwrap(org.hibernate.query.Query.class);
 			query.setParameter(0, 0);
 			query.setParameter(1, 1);
 			postEntities = query.getResultList();

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -33,8 +34,8 @@ public class UserController {
 
 	@GetMapping(value = "/api/user")
 	@ResponseBody
-	public CommonRespone<List<UserDto>> getListUser() {
-		List<UserDto> userDtos = userService.getListUser();
+	public CommonRespone<List<UserDto>> getListUser(@RequestParam(value = "keyword", required = false) String keyword) {
+		List<UserDto> userDtos = userService.getListUser(keyword);
 		int code = HttpServletResponse.SC_OK;
 		String message = "Fetch Successfully Users";
 		boolean success = true;

@@ -14,5 +14,5 @@ public interface IUserService {
 
 	public UserDto saveUser(UserDto userDto);
 
-	public List<UserDto> getListUser();
+	public List<UserDto> getListUser(String keyword);
 }

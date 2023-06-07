@@ -8,10 +8,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.snsite.converter.UserConverter;
+import com.snsite.dto.FriendShipDto;
 import com.snsite.dto.UserDto;
 import com.snsite.entity.UserEntity;
 import com.snsite.helper.AuthenticationHelper;
 import com.snsite.repository.UserRepository;
+import com.snsite.service.IFriendShipService;
 import com.snsite.service.IUserService;
 
 @Service
@@ -24,11 +26,23 @@ public class UserService implements IUserService {
 	PasswordEncoder passwordEncoder;
 	@Autowired
 	private AuthenticationHelper authenticationHelper;
+	@Autowired
+	private IFriendShipService friendShipService;
 
 	@Override
 	public UserDto getCurrentProfile() {
 		UserEntity userEntity = authenticationHelper.getUserFromContext();
-		return userConverter.toDto(userEntity);
+		List<FriendShipDto> friendShipDtos = friendShipService.getListFriendShip();
+		UserDto userDto = userConverter.toDto(userEntity);
+		int countOfFriends = 0;
+		if (friendShipDtos != null && friendShipDtos.size() > 0) {
+			for (FriendShipDto friendShipDto : friendShipDtos) {
+				if (friendShipDto.getState() == FriendShipDto.StateToString.get(FriendShipDto.StateFriend))
+					countOfFriends++;
+			}
+		}
+		userDto.setCountOfFriends(countOfFriends);
+		return userDto;
 	}
 
 	@Override
@@ -36,7 +50,17 @@ public class UserService implements IUserService {
 		Optional<UserEntity> userEntity = userRepository.findById(id);
 		if (!userEntity.isPresent())
 			return null;
-		return userConverter.toDto(userEntity.get());
+		UserDto userDto = userConverter.toDto(userEntity.get());
+		List<FriendShipDto> friendShipDtos = friendShipService.getListFriendShip();
+		int countOfFriends = 0;
+		if (friendShipDtos != null && friendShipDtos.size() > 0) {
+			for (FriendShipDto friendShipDto : friendShipDtos) {
+				if (friendShipDto.getState() == FriendShipDto.StateToString.get(FriendShipDto.StateFriend))
+					countOfFriends++;
+			}
+		}
+		userDto.setCountOfFriends(countOfFriends);
+		return userDto;
 	}
 
 	@Override
@@ -61,8 +85,13 @@ public class UserService implements IUserService {
 	}
 
 	@Override
-	public List<UserDto> getListUser() {
-		List<UserEntity> userEntities = userRepository.findAll();
+	public List<UserDto> getListUser(String keyword) {
+		List<UserEntity> userEntities;
+		if (keyword != null && keyword != "") {
+			userEntities = userRepository.findAllByLastNameOrFirstNameAllIgnoreCase(keyword, keyword);
+		} else {
+			userEntities = userRepository.findAll();
+		}
 		return userConverter.toListDto(userEntities);
 	}
 

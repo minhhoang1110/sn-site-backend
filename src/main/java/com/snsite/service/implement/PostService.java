@@ -39,7 +39,7 @@ public class PostService implements IPostService {
 			if (!userEntity.isPresent()) {
 				return null;
 			}
-			postEntities = postRepository.findAllByUserPost(userEntity.get());
+			postEntities = postRepository.findAllByUserPostOrderByUpdatedAtDesc(userEntity.get());
 		}
 		return postConverter.toListDto(postEntities);
 	}

@@ -8,5 +8,5 @@ import com.snsite.entity.PostEntity;
 import com.snsite.entity.UserEntity;
 
 public interface PostRepository extends JpaRepository<PostEntity, Long> {
-	List<PostEntity> findAllByUserPost(UserEntity userEntity);
+	List<PostEntity> findAllByUserPostOrderByUpdatedAtDesc(UserEntity userEntity);
 }

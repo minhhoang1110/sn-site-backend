@@ -11,7 +11,6 @@ public class FriendShipDto extends BaseDto<FriendShipDto> {
 
 	public static Integer StateRequested = 0;
 	public static Integer StateFriend = 1;
-	public static Integer StateUnFriend = 1;
 	public static HashMap<String, Integer> StateToId = new HashMap<String, Integer>() {
 		/**
 		 * 
@@ -21,7 +20,6 @@ public class FriendShipDto extends BaseDto<FriendShipDto> {
 		{
 			put("StateRequested", 0);
 			put("StateFriend", 1);
-			put("StateUnFriend", 2);
 		}
 	};
 
@@ -34,7 +32,6 @@ public class FriendShipDto extends BaseDto<FriendShipDto> {
 		{
 			put(0, "StateRequested");
 			put(1, "StateFriend");
-			put(2, "StateUnFriend");
 		}
 	};
 
