@@ -1,5 +1,6 @@
 package com.snsite.service.implement;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -7,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.snsite.converter.PostConverter;
+import com.snsite.dto.FriendShipDto;
 import com.snsite.dto.PostDto;
 import com.snsite.entity.PostEntity;
 import com.snsite.entity.UserEntity;
@@ -14,6 +16,7 @@ import com.snsite.helper.AuthenticationHelper;
 import com.snsite.repository.PostRepository;
 import com.snsite.repository.UserRepository;
 import com.snsite.repository.customize.ICustomPostRepository;
+import com.snsite.service.IFriendShipService;
 import com.snsite.service.IPostService;
 
 @Service
@@ -28,20 +31,41 @@ public class PostService implements IPostService {
 	private PostConverter postConverter;
 	@Autowired
 	private UserRepository userRepository;
+	@Autowired
+	private IFriendShipService friendShipService;
 
 	@Override
 	public List<PostDto> getListPost(Long userId) {
+		UserEntity contextUser = authenticationHelper.getUserFromContext();
+		List<PostEntity> result = new ArrayList<>();
 		List<PostEntity> postEntities;
 		if (userId == null) {
-			postEntities = customPostRepository.findAllWithFriendShip(userId);
+			postEntities = customPostRepository.findAllAvailablePost();
+			for (PostEntity postEntity : postEntities) {
+				if (postEntity.getUserPost().getId() == contextUser.getId()) {
+					result.add(postEntity);
+					continue;
+				}
+				if (postEntity.getSharedType() == PostDto.SharedTypePrivate)
+					continue;
+				if (postEntity.getSharedType() == PostDto.SharedTypePublic) {
+					result.add(postEntity);
+					continue;
+				}
+				FriendShipDto friendShipDto = friendShipService.getFriendShipDetail(postEntity.getUserPost().getId());
+				if (friendShipDto == null)
+					continue;
+				result.add(postEntity);
+			}
 		} else {
 			Optional<UserEntity> userEntity = userRepository.findById(userId);
 			if (!userEntity.isPresent()) {
 				return null;
 			}
 			postEntities = postRepository.findAllByUserPostOrderByUpdatedAtDesc(userEntity.get());
+			result = postEntities;
 		}
-		return postConverter.toListDto(postEntities);
+		return postConverter.toListDto(result);
 	}
 
 	@Override

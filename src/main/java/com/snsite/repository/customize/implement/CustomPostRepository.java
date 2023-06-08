@@ -17,7 +17,7 @@ public class CustomPostRepository implements ICustomPostRepository {
 	private EntityManager entityManager;
 
 	@Override
-	public List<PostEntity> findAllWithFriendShip(Long userId) {
+	public List<PostEntity> findAllAvailablePost() {
 		List<PostEntity> postEntities = null;
 		try {
 			Query query = entityManager.createNativeQuery(
