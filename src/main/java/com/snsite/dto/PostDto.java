@@ -1,6 +1,7 @@
 package com.snsite.dto;
 
 import java.util.HashMap;
+import java.util.List;
 
 public class PostDto extends BaseDto<PostDto> {
 	private Long userId;
@@ -10,6 +11,8 @@ public class PostDto extends BaseDto<PostDto> {
 	private String imageUrls;
 	private int countOfLikes;
 	private int countOfComments;
+	private List<LikeDto> likes;
+	private CommentDto comments;
 
 	public static Integer SharedTypePublic = 0;
 	public static Integer SharedTypeFriend = 1;
@@ -94,6 +97,22 @@ public class PostDto extends BaseDto<PostDto> {
 
 	public void setCountOfComments(int countOfComments) {
 		this.countOfComments = countOfComments;
+	}
+
+	public List<LikeDto> getLikes() {
+		return likes;
+	}
+
+	public void setLikes(List<LikeDto> likes) {
+		this.likes = likes;
+	}
+
+	public CommentDto getComments() {
+		return comments;
+	}
+
+	public void setComments(CommentDto comments) {
+		this.comments = comments;
 	}
 
 }

@@ -13,7 +13,7 @@ public class LikeEntity extends BaseEntity {
 	private UserEntity userLike;
 	@ManyToOne
 	@JoinColumn(name = "post_id")
-	private PostEntity postLike;
+	private PostEntity likeOfPost;
 
 	public UserEntity getUserLike() {
 		return userLike;
@@ -23,12 +23,12 @@ public class LikeEntity extends BaseEntity {
 		this.userLike = userLike;
 	}
 
-	public PostEntity getPostLike() {
-		return postLike;
+	public PostEntity getLikeOfPost() {
+		return likeOfPost;
 	}
 
-	public void setPostLike(PostEntity postLike) {
-		this.postLike = postLike;
+	public void setLikeOfPost(PostEntity likeOfPost) {
+		this.likeOfPost = likeOfPost;
 	}
 
 }

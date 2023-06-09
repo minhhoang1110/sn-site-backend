@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.snsite.converter.PostConverter;
 import com.snsite.dto.FriendShipDto;
+import com.snsite.dto.LikeDto;
 import com.snsite.dto.PostDto;
 import com.snsite.entity.PostEntity;
 import com.snsite.entity.UserEntity;
@@ -17,6 +18,7 @@ import com.snsite.repository.PostRepository;
 import com.snsite.repository.UserRepository;
 import com.snsite.repository.customize.ICustomPostRepository;
 import com.snsite.service.IFriendShipService;
+import com.snsite.service.ILikeService;
 import com.snsite.service.IPostService;
 
 @Service
@@ -33,6 +35,17 @@ public class PostService implements IPostService {
 	private UserRepository userRepository;
 	@Autowired
 	private IFriendShipService friendShipService;
+	@Autowired
+	private ILikeService likeService;
+
+	private PostDto getLikeOfPost(PostDto postDto) {
+		List<LikeDto> likeDtos = likeService.getListLike(postDto.getId());
+		if (likeDtos != null) {
+			postDto.setLikes(likeDtos);
+			postDto.setCountOfLikes(likeDtos.size());
+		}
+		return postDto;
+	}
 
 	@Override
 	public List<PostDto> getListPost(Long userId) {
@@ -65,7 +78,11 @@ public class PostService implements IPostService {
 			postEntities = postRepository.findAllByUserPostOrderByUpdatedAtDesc(userEntity.get());
 			result = postEntities;
 		}
-		return postConverter.toListDto(result);
+		List<PostDto> postDtos = new ArrayList<>();
+		for (PostEntity postEntity : result) {
+			postDtos.add(this.getLikeOfPost(postConverter.toDto(postEntity)));
+		}
+		return postDtos;
 	}
 
 	@Override
@@ -74,7 +91,9 @@ public class PostService implements IPostService {
 		if (!postEntity.isPresent()) {
 			return null;
 		}
-		return postConverter.toDto(postEntity.get());
+		PostDto postDto = postConverter.toDto(postEntity.get());
+		postDto = getLikeOfPost(postDto);
+		return postDto;
 	}
 
 	@Override

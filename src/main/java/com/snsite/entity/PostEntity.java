@@ -24,7 +24,7 @@ public class PostEntity extends BaseEntity {
 	private String content;
 	@Column
 	private String imageUrls;
-	@OneToMany(mappedBy = "postLike")
+	@OneToMany(mappedBy = "likeOfPost")
 	private List<LikeEntity> likes = new ArrayList<>();
 	@OneToMany(mappedBy = "postComment")
 	private List<CommentEntity> comments = new ArrayList<>();
