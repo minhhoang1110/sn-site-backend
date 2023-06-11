@@ -21,8 +21,6 @@ public class LikeConverter {
 	private PostRepository postRepository;
 	@Autowired
 	private UserConverter userConverter;
-	@Autowired
-	private PostConverter postConverter;
 
 	public LikeEntity toEntity(LikeDto likeDto) {
 		LikeEntity likeEntity = new LikeEntity();

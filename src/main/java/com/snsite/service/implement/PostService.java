@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.snsite.converter.PostConverter;
+import com.snsite.dto.CommentDto;
 import com.snsite.dto.FriendShipDto;
 import com.snsite.dto.LikeDto;
 import com.snsite.dto.PostDto;
@@ -17,6 +18,7 @@ import com.snsite.helper.AuthenticationHelper;
 import com.snsite.repository.PostRepository;
 import com.snsite.repository.UserRepository;
 import com.snsite.repository.customize.ICustomPostRepository;
+import com.snsite.service.ICommentService;
 import com.snsite.service.IFriendShipService;
 import com.snsite.service.ILikeService;
 import com.snsite.service.IPostService;
@@ -37,12 +39,19 @@ public class PostService implements IPostService {
 	private IFriendShipService friendShipService;
 	@Autowired
 	private ILikeService likeService;
+	@Autowired
+	private ICommentService commentService;
 
-	private PostDto getLikeOfPost(PostDto postDto) {
+	private PostDto getLikeAndCommentOfPost(PostDto postDto) {
 		List<LikeDto> likeDtos = likeService.getListLike(postDto.getId());
 		if (likeDtos != null) {
 			postDto.setLikes(likeDtos);
 			postDto.setCountOfLikes(likeDtos.size());
+		}
+		List<CommentDto> commentDtos = commentService.getListComment(postDto.getId());
+		if (commentDtos != null) {
+			postDto.setComments(commentDtos);
+			postDto.setCountOfComments(commentDtos.size());
 		}
 		return postDto;
 	}
@@ -80,7 +89,7 @@ public class PostService implements IPostService {
 		}
 		List<PostDto> postDtos = new ArrayList<>();
 		for (PostEntity postEntity : result) {
-			postDtos.add(this.getLikeOfPost(postConverter.toDto(postEntity)));
+			postDtos.add(this.getLikeAndCommentOfPost(postConverter.toDto(postEntity)));
 		}
 		return postDtos;
 	}
@@ -92,7 +101,7 @@ public class PostService implements IPostService {
 			return null;
 		}
 		PostDto postDto = postConverter.toDto(postEntity.get());
-		postDto = getLikeOfPost(postDto);
+		postDto = getLikeAndCommentOfPost(postDto);
 		return postDto;
 	}
 

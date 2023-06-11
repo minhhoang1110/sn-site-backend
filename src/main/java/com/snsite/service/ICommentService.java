@@ -8,4 +8,6 @@ public interface ICommentService {
 	public List<CommentDto> getListComment(Long postId);
 
 	public CommentDto saveComment(CommentDto commentDto);
+
+	public boolean deleteComment(Long id);
 }

@@ -12,7 +12,7 @@ public class PostDto extends BaseDto<PostDto> {
 	private int countOfLikes;
 	private int countOfComments;
 	private List<LikeDto> likes;
-	private CommentDto comments;
+	private List<CommentDto> comments;
 
 	public static Integer SharedTypePublic = 0;
 	public static Integer SharedTypeFriend = 1;
@@ -107,11 +107,11 @@ public class PostDto extends BaseDto<PostDto> {
 		this.likes = likes;
 	}
 
-	public CommentDto getComments() {
+	public List<CommentDto> getComments() {
 		return comments;
 	}
 
-	public void setComments(CommentDto comments) {
+	public void setComments(List<CommentDto> comments) {
 		this.comments = comments;
 	}
 

@@ -4,7 +4,6 @@ public class CommentDto extends BaseDto<CommentDto> {
 	private Long userId;
 	private UserDto user;
 	private Long postId;
-	private PostDto post;
 	private String comment;
 
 	public Long getUserId() {
@@ -29,14 +28,6 @@ public class CommentDto extends BaseDto<CommentDto> {
 
 	public void setPostId(Long postId) {
 		this.postId = postId;
-	}
-
-	public PostDto getPost() {
-		return post;
-	}
-
-	public void setPost(PostDto post) {
-		this.post = post;
 	}
 
 	public String getComment() {
