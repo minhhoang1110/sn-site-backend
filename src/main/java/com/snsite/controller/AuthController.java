@@ -3,7 +3,6 @@ package com.snsite.controller;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -59,13 +58,31 @@ public class AuthController {
 	@PostMapping(value = "/api/send_verify_email")
 	@ResponseBody
 	public AuthRespone sendVerifyEmail() {
-		return null;
+		boolean result = authService.sendVerifyEmail();
+		int code = HttpServletResponse.SC_OK;
+		String message = "Send Verify Email Successfully";
+		boolean success = true;
+		if (!result) {
+			code = HttpServletResponse.SC_BAD_REQUEST;
+			message = "Send Verify Email Error";
+			success = false;
+		}
+		return new AuthRespone(code, success, message, null);
 	}
 
-	@GetMapping(value = "/api/verify_email")
+	@PostMapping(value = "/api/verify_email")
 	@ResponseBody
-	public ResponseBody verifyEmail(@RequestParam("token") String token) {
-		return null;
+	public AuthRespone verifyEmail(@RequestParam("token") String token) {
+		boolean result = authService.verifyEmail(token);
+		int code = HttpServletResponse.SC_OK;
+		String message = "Verify Email Successfully";
+		boolean success = true;
+		if (!result) {
+			code = HttpServletResponse.SC_BAD_REQUEST;
+			message = "Verify Email Error";
+			success = false;
+		}
+		return new AuthRespone(code, success, message, null);
 	}
 
 	@PostMapping(value = "/api/refresh_token")

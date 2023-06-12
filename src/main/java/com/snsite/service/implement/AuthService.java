@@ -1,5 +1,8 @@
 package com.snsite.service.implement;
 
+import java.util.Date;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -9,12 +12,13 @@ import org.springframework.stereotype.Service;
 
 import com.snsite.converter.UserConverter;
 import com.snsite.dto.UserDto;
+import com.snsite.emailer.service.IEmailService;
 import com.snsite.entity.RefreshTokenEntity;
 import com.snsite.entity.UserEntity;
 import com.snsite.helper.AuthenticationHelper;
+import com.snsite.helper.DateTimeHelper;
 import com.snsite.middleware.CustomUserDetails;
 import com.snsite.middleware.JwtTokenProvider;
-import com.snsite.middleware.UserMiddlewareService;
 import com.snsite.repository.UserRepository;
 import com.snsite.service.IAuthService;
 import com.snsite.service.IRefreshTokenService;
@@ -40,9 +44,11 @@ public class AuthService implements IAuthService {
 	@Autowired
 	private UserRepository userRepository;
 	@Autowired
+	private IEmailService emailService;
+	@Autowired
 	private AuthenticationHelper authenticationHelper;
 	@Autowired
-	private UserMiddlewareService userMiddlewareService;
+	private DateTimeHelper dateTimeHelper;
 
 	@Override
 	public UserWithToken login(LoginRequest loginRequest) {
@@ -65,15 +71,41 @@ public class AuthService implements IAuthService {
 	}
 
 	@Override
-	public UserWithToken sendVerifyEmail() {
-		// TODO Auto-generated method stub
-		return null;
+	public boolean sendVerifyEmail() {
+		UserEntity contextUser = authenticationHelper.getUserFromContext();
+		if (contextUser.getVerifyEmailAt() != null)
+			return false;
+		if (contextUser.getSendVerifyEmailAt() != null) {
+			long durationHours = dateTimeHelper.getDuration(contextUser.getSendVerifyEmailAt(), new Date()).toHours();
+			if (durationHours < 24)
+				return false;
+
+		}
+		boolean result = emailService.sendVerifyEmail(contextUser);
+		if (result) {
+			contextUser.setSendVerifyEmailAt(new Date());
+			userRepository.save(contextUser);
+		}
+		return result;
 	}
 
 	@Override
-	public UserWithToken verifyEmail(String token) {
-		// TODO Auto-generated method stub
-		return null;
+	public boolean verifyEmail(String token) {
+		Long userId = jwtTokenProvider.getUserIdFromEmailToken(token);
+		Optional<UserEntity> userEntity = userRepository.findById(userId);
+		if (!userEntity.isPresent())
+			return false;
+		if (userEntity.get().getSendVerifyEmailAt() == null)
+			return false;
+		long durationHours = dateTimeHelper.getDuration(userEntity.get().getSendVerifyEmailAt(), new Date()).toHours();
+		if (durationHours > 24)
+			return false;
+		UserEntity contextUser = authenticationHelper.getUserFromContext();
+		if (contextUser.getId() != userEntity.get().getId())
+			return false;
+		contextUser.setVerifyEmailAt(new Date());
+		userRepository.save(contextUser);
+		return true;
 	}
 
 	@Override

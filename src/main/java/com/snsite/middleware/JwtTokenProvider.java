@@ -15,8 +15,10 @@ import io.jsonwebtoken.UnsupportedJwtException;
 public class JwtTokenProvider {
 	private final String ACCESS_TOKEN_SECRET = "access-secret-tmh";
 	private final String REFRESH_TOKEN_SECRET = "refresh-secret-tmh-ezio";
+	private final String EMAIL_TOKEN_SECRET = "email-secret-tmh-ezio";
 	private final long ACCESS_TOKEN_EXPIRATION = 259200000L;
 	private final long REFRESH_TOKEN_EXPIRATION = 604800000L;
+	private final long EMAIL_TOKEN_EXPIRATION = 86400L;
 
 	public String generateAccessToken(CustomUserDetails customUserDetails) {
 		Date currentTime = new Date();
@@ -34,6 +36,14 @@ public class JwtTokenProvider {
 				.signWith(SignatureAlgorithm.HS512, REFRESH_TOKEN_SECRET).compact();
 	}
 
+	public String generateEmailToken(CustomUserDetails customUserDetails) {
+		Date currentTime = new Date();
+		Date expiryDate = new Date(currentTime.getTime() + EMAIL_TOKEN_EXPIRATION);
+		return Jwts.builder().setSubject(Long.toString(customUserDetails.getUserEntity().getId()))
+				.setIssuedAt(currentTime).setExpiration(expiryDate)
+				.signWith(SignatureAlgorithm.HS512, EMAIL_TOKEN_SECRET).compact();
+	}
+
 	public Long getUserIdFromAccessToken(String token) {
 		Claims claims = Jwts.parser().setSigningKey(ACCESS_TOKEN_SECRET).parseClaimsJws(token).getBody();
 		return Long.parseLong(claims.getSubject());
@@ -41,6 +51,11 @@ public class JwtTokenProvider {
 
 	public Long getUserIdFromRefreshToken(String token) {
 		Claims claims = Jwts.parser().setSigningKey(REFRESH_TOKEN_SECRET).parseClaimsJws(token).getBody();
+		return Long.parseLong(claims.getSubject());
+	}
+
+	public Long getUserIdFromEmailToken(String token) {
+		Claims claims = Jwts.parser().setSigningKey(EMAIL_TOKEN_SECRET).parseClaimsJws(token).getBody();
 		return Long.parseLong(claims.getSubject());
 	}
 

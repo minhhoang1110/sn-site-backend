@@ -14,9 +14,9 @@ public interface IAuthService {
 
 	public UserWithToken logout();
 
-	public UserWithToken sendVerifyEmail();
+	public boolean sendVerifyEmail();
 
-	public UserWithToken verifyEmail(String token);
+	public boolean verifyEmail(String token);
 
 	public UserWithToken refreshToken(RefreshTokenRequest refreshTokenRequest);
 
