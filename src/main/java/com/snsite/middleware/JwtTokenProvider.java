@@ -18,7 +18,7 @@ public class JwtTokenProvider {
 	private final String EMAIL_TOKEN_SECRET = "email-secret-tmh-ezio";
 	private final long ACCESS_TOKEN_EXPIRATION = 259200000L;
 	private final long REFRESH_TOKEN_EXPIRATION = 604800000L;
-	private final long EMAIL_TOKEN_EXPIRATION = 86400L;
+	private final long EMAIL_TOKEN_EXPIRATION = 86400000L;
 
 	public String generateAccessToken(CustomUserDetails customUserDetails) {
 		Date currentTime = new Date();
