@@ -15,6 +15,7 @@ import com.snsite.type.request.ChangePasswordRequest;
 import com.snsite.type.request.ForgotPasswordRequest;
 import com.snsite.type.request.LoginRequest;
 import com.snsite.type.request.RefreshTokenRequest;
+import com.snsite.type.request.ReqForgotPasswordRequest;
 import com.snsite.type.respone.AuthRespone;
 import com.snsite.type.respone.UserWithToken;
 
@@ -102,19 +103,46 @@ public class AuthController {
 
 	@PostMapping(value = "/api/request_forgot_password")
 	@ResponseBody
-	public AuthRespone requestForgotPassword() {
-		return null;
+	public AuthRespone requestForgotPassword(@RequestBody ReqForgotPasswordRequest request) {
+		boolean result = authService.requestForgotPassword(request);
+		int code = HttpServletResponse.SC_OK;
+		String message = "Send Forgot Password Email Successfully";
+		boolean success = true;
+		if (!result) {
+			code = HttpServletResponse.SC_BAD_REQUEST;
+			message = "Send  Forgot Password Email Error";
+			success = false;
+		}
+		return new AuthRespone(code, success, message, null);
 	}
 
 	@PostMapping(value = "/api/forgot_password")
 	@ResponseBody
 	public AuthRespone forgotPassword(@RequestBody ForgotPasswordRequest forgotPasswordRequest) {
-		return null;
+		UserWithToken data = authService.forgotPassword(forgotPasswordRequest);
+		int code = HttpServletResponse.SC_OK;
+		String message = "Reset Password Successfully";
+		boolean success = true;
+		if (data == null) {
+			code = HttpServletResponse.SC_BAD_REQUEST;
+			message = "Reset Password Error";
+			success = false;
+		}
+		return new AuthRespone(code, success, message, data);
 	}
 
 	@PostMapping(value = "/api/change_password")
 	@ResponseBody
 	public AuthRespone changePassword(@RequestBody ChangePasswordRequest changePasswordRequest) {
-		return null;
+		UserWithToken data = authService.changePassword(changePasswordRequest);
+		int code = HttpServletResponse.SC_OK;
+		String message = "Change Password Successfully";
+		boolean success = true;
+		if (data == null) {
+			code = HttpServletResponse.SC_BAD_REQUEST;
+			message = "Change Password Error";
+			success = false;
+		}
+		return new AuthRespone(code, success, message, data);
 	}
 }

@@ -51,8 +51,11 @@ public class WebSecurityConfig {
 		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().exceptionHandling()
 				.authenticationEntryPoint((request, response, ex) -> response
 						.sendError(HttpServletResponse.SC_UNAUTHORIZED, ex.getMessage()));
-		http.authorizeHttpRequests((requests) -> requests.antMatchers("/api/login", "/api/signup", "/api/verify_email",
-				"/api/forgot_password", "/api/refresh_token").permitAll().anyRequest().authenticated());
+		http.authorizeHttpRequests(
+				(requests) -> requests
+						.antMatchers("/api/login", "/api/signup", "/api/verify_email", "/api/forgot_password",
+								"/api/refresh_token", "/api/request_forgot_password")
+						.permitAll().anyRequest().authenticated());
 		http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
 		return http.build();

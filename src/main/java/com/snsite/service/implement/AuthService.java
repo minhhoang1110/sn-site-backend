@@ -8,6 +8,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.snsite.converter.UserConverter;
@@ -27,6 +28,7 @@ import com.snsite.type.request.ChangePasswordRequest;
 import com.snsite.type.request.ForgotPasswordRequest;
 import com.snsite.type.request.LoginRequest;
 import com.snsite.type.request.RefreshTokenRequest;
+import com.snsite.type.request.ReqForgotPasswordRequest;
 import com.snsite.type.respone.UserWithToken;
 
 @Service
@@ -49,6 +51,8 @@ public class AuthService implements IAuthService {
 	private AuthenticationHelper authenticationHelper;
 	@Autowired
 	private DateTimeHelper dateTimeHelper;
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 
 	@Override
 	public UserWithToken login(LoginRequest loginRequest) {
@@ -128,21 +132,56 @@ public class AuthService implements IAuthService {
 	}
 
 	@Override
-	public UserWithToken requestForgotPassword() {
-		// TODO Auto-generated method stub
-		return null;
+	public boolean requestForgotPassword(ReqForgotPasswordRequest request) {
+		UserEntity userEntity = userRepository.findOneByEmail(request.getEmail());
+		if (userEntity == null)
+			return false;
+		if (userEntity.getVerifyEmailAt() == null)
+			return false;
+		boolean result = emailService.sendForgotPasswordEmail(userEntity);
+		if (!result)
+			return false;
+		return true;
 	}
 
 	@Override
 	public UserWithToken forgotPassword(ForgotPasswordRequest forgotPasswordRequest) {
-		// TODO Auto-generated method stub
-		return null;
+		Long userId = jwtTokenProvider.getUserIdFromEmailToken(forgotPasswordRequest.getToken());
+		Optional<UserEntity> userEntity = userRepository.findById(userId);
+		if (!userEntity.isPresent())
+			return null;
+		UserEntity oldData = userEntity.get();
+		if (forgotPasswordRequest.getEmail().compareTo(oldData.getEmail()) != 0)
+			return null;
+		if (!passwordEncoder.matches(forgotPasswordRequest.getTemporaryPassword(), oldData.getPassword()))
+			return null;
+		String encodedNewPassword = passwordEncoder.encode(forgotPasswordRequest.getNewPassword());
+		oldData.setPassword(encodedNewPassword);
+		oldData = userRepository.save(oldData);
+		CustomUserDetails customUserDetails = new CustomUserDetails(oldData);
+		String accessToken = jwtTokenProvider.generateAccessToken(customUserDetails);
+		String refreshToken = jwtTokenProvider.generateRefreshToken(customUserDetails);
+		RefreshTokenEntity refreshTokenEntity = new RefreshTokenEntity(customUserDetails.getUserEntity().getId(),
+				refreshToken);
+		refreshTokenEntity = refreshTokenService.saveRefreshToken(refreshTokenEntity);
+		return new UserWithToken(accessToken, refreshToken, userConverter.toDto(customUserDetails.getUserEntity()));
 	}
 
 	@Override
 	public UserWithToken changePassword(ChangePasswordRequest changePasswordRequest) {
-		// TODO Auto-generated method stub
-		return null;
+		UserEntity contextUser = authenticationHelper.getUserFromContext();
+		if (!passwordEncoder.matches(changePasswordRequest.getOldPassword(), contextUser.getPassword()))
+			return null;
+		String encodedNewPassword = passwordEncoder.encode(changePasswordRequest.getNewPassword());
+		contextUser.setPassword(encodedNewPassword);
+		contextUser = userRepository.save(contextUser);
+		CustomUserDetails customUserDetails = new CustomUserDetails(contextUser);
+		String accessToken = jwtTokenProvider.generateAccessToken(customUserDetails);
+		String refreshToken = jwtTokenProvider.generateRefreshToken(customUserDetails);
+		RefreshTokenEntity refreshTokenEntity = new RefreshTokenEntity(customUserDetails.getUserEntity().getId(),
+				refreshToken);
+		refreshTokenEntity = refreshTokenService.saveRefreshToken(refreshTokenEntity);
+		return new UserWithToken(accessToken, refreshToken, userConverter.toDto(customUserDetails.getUserEntity()));
 	}
 
 	private boolean validateSignup(UserDto userDto) {

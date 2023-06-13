@@ -5,6 +5,7 @@ import com.snsite.type.request.ChangePasswordRequest;
 import com.snsite.type.request.ForgotPasswordRequest;
 import com.snsite.type.request.LoginRequest;
 import com.snsite.type.request.RefreshTokenRequest;
+import com.snsite.type.request.ReqForgotPasswordRequest;
 import com.snsite.type.respone.UserWithToken;
 
 public interface IAuthService {
@@ -20,7 +21,7 @@ public interface IAuthService {
 
 	public UserWithToken refreshToken(RefreshTokenRequest refreshTokenRequest);
 
-	public UserWithToken requestForgotPassword();
+	public boolean requestForgotPassword(ReqForgotPasswordRequest request);
 
 	public UserWithToken forgotPassword(ForgotPasswordRequest forgotPasswordRequest);
 
