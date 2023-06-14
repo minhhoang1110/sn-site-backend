@@ -60,6 +60,8 @@ public class UserConverter {
 		userDto.setUpdatedAt(userEntity.getUpdatedAt());
 		userDto.setUpdatedBy(userEntity.getUpdatedBy());
 		userDto.setIsActive(userEntity.getIsActive());
+		userDto.setSendVerifyEmailAt(userEntity.getSendVerifyEmailAt());
+		userDto.setVerifyEmailAt(userEntity.getVerifyEmailAt());
 		return userDto;
 	}
 

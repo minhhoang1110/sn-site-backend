@@ -104,11 +104,9 @@ public class AuthService implements IAuthService {
 		long durationHours = dateTimeHelper.getHourDuration(userEntity.get().getSendVerifyEmailAt(), new Date());
 		if (durationHours > 24)
 			return false;
-		UserEntity contextUser = authenticationHelper.getUserFromContext();
-		if (contextUser.getId() != userEntity.get().getId())
-			return false;
-		contextUser.setVerifyEmailAt(new Date());
-		userRepository.save(contextUser);
+		UserEntity user = userEntity.get();
+		user.setVerifyEmailAt(new Date());
+		userRepository.save(user);
 		return true;
 	}
 
