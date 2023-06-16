@@ -8,4 +8,8 @@ public interface IMessageService {
 	public List<MessageDto> getListMessage(Long roomId);
 
 	public MessageDto saveMessage(MessageDto messageDto);
+
+	public boolean deleteMessage(Long messageId);
+
+	public void readAllMessageByRoomChatId(Long roomId);
 }

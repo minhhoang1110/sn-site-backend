@@ -38,11 +38,11 @@ public class MessageEntity extends BaseEntity {
 		this.userMessage = userMessage;
 	}
 
-	public boolean isRead() {
+	public boolean getIsRead() {
 		return isRead;
 	}
 
-	public void setRead(boolean isRead) {
+	public void setIsRead(boolean isRead) {
 		this.isRead = isRead;
 	}
 

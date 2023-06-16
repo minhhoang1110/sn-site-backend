@@ -10,4 +10,8 @@ public interface IRoomChatService {
 	public RoomChatDto getRoomChatDetail(Long id);
 
 	public RoomChatDto saveRoomChat(RoomChatDto roomChatDto);
+
+	public boolean deleteRoomChat(Long id);
+
+	public boolean checkUserJoinRoomChat(String[] userIds, String userId);
 }
