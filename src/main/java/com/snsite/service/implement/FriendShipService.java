@@ -1,5 +1,6 @@
 package com.snsite.service.implement;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,11 +28,26 @@ public class FriendShipService implements IFriendShipService {
 	private AuthenticationHelper authenticationHelper;
 
 	@Override
-	public List<FriendShipDto> getListFriendShip() {
-		UserEntity userEntity = authenticationHelper.getUserFromContext();
-		List<FriendShipEntity> friendShipEntities = friendShipRepository
-				.findAllByUserFriendShipOrSecondUserId(userEntity, userEntity.getId());
-		return friendShipConverter.toListDto(friendShipEntities);
+	public List<FriendShipDto> getListFriendShip(Long userId) {
+		List<FriendShipEntity> friendShipEntities = new ArrayList<>();
+		if (userId != null) {
+			Optional<UserEntity> userEntity = userRepository.findById(userId);
+			if (!userEntity.isPresent())
+				return null;
+
+			friendShipEntities = friendShipRepository.findAllByUserFriendShipOrSecondUserId(userEntity.get(),
+					userEntity.get().getId());
+		} else {
+			UserEntity userEntity = authenticationHelper.getUserFromContext();
+			friendShipEntities = friendShipRepository.findAllByUserFriendShipOrSecondUserId(userEntity,
+					userEntity.getId());
+		}
+		List<FriendShipEntity> result = new ArrayList<>();
+		for (FriendShipEntity friendShipEntity : friendShipEntities) {
+			if (friendShipEntity.getState() == FriendShipDto.StateFriend)
+				result.add(friendShipEntity);
+		}
+		return friendShipConverter.toListDto(result);
 	}
 
 	@Override

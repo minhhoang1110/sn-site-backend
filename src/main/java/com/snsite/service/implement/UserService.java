@@ -37,7 +37,7 @@ public class UserService implements IUserService {
 	@Override
 	public UserDto getCurrentProfile() {
 		UserEntity userEntity = authenticationHelper.getUserFromContext();
-		List<FriendShipDto> friendShipDtos = friendShipService.getListFriendShip();
+		List<FriendShipDto> friendShipDtos = friendShipService.getListFriendShip(null);
 		UserDto userDto = userConverter.toDto(userEntity);
 		int countOfFriends = 0;
 		if (friendShipDtos != null && friendShipDtos.size() > 0) {
@@ -57,7 +57,7 @@ public class UserService implements IUserService {
 		if (!userEntity.isPresent())
 			return null;
 		UserDto userDto = userConverter.toDto(userEntity.get());
-		List<FriendShipDto> friendShipDtos = friendShipService.getListFriendShip();
+		List<FriendShipDto> friendShipDtos = friendShipService.getListFriendShip(id);
 		int countOfFriends = 0;
 		if (friendShipDtos != null && friendShipDtos.size() > 0) {
 			for (FriendShipDto friendShipDto : friendShipDtos) {
@@ -70,6 +70,11 @@ public class UserService implements IUserService {
 		if (roomChatDto != null && contextUser.getId() != userDto.getId()) {
 			userDto.setChatWithSessionUser(true);
 			userDto.setRoomChatId(roomChatDto.getId());
+		}
+		FriendShipDto friendShipDto = friendShipService.getFriendShipDetail(userDto.getId());
+		if (friendShipDto != null && friendShipDto.getState()
+				.compareTo(FriendShipDto.StateToString.get(FriendShipDto.StateFriend)) == 0) {
+			userDto.setBeFriendWidthSessionUser(true);
 		}
 		return userDto;
 	}
@@ -111,6 +116,11 @@ public class UserService implements IUserService {
 				if (roomChatDto != null) {
 					userDto.setChatWithSessionUser(true);
 					userDto.setRoomChatId(roomChatDto.getId());
+				}
+				FriendShipDto friendShipDto = friendShipService.getFriendShipDetail(userDto.getId());
+				if (friendShipDto != null && friendShipDto.getState()
+						.compareTo(FriendShipDto.StateToString.get(FriendShipDto.StateFriend)) == 0) {
+					userDto.setBeFriendWidthSessionUser(true);
 				}
 				result.add(userDto);
 			}

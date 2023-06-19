@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -40,8 +41,9 @@ public class FriendShipController {
 
 	@GetMapping(value = "/api/friendship")
 	@ResponseBody
-	public CommonRespone<List<FriendShipDto>> getListFriendShip() {
-		List<FriendShipDto> friendShipDtos = friendShipService.getListFriendShip();
+	public CommonRespone<List<FriendShipDto>> getListFriendShip(
+			@RequestParam(value = "userId", required = false) Long userId) {
+		List<FriendShipDto> friendShipDtos = friendShipService.getListFriendShip(userId);
 		int code = HttpServletResponse.SC_OK;
 		String message = "Fetch Successfully FriendShips";
 		boolean success = true;

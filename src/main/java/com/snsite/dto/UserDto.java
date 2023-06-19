@@ -35,6 +35,8 @@ public class UserDto extends BaseDto<UserDto> {
 
 	private Long roomChatId;
 
+	private boolean beFriendWidthSessionUser = false;
+
 	public String getUsername() {
 		return username;
 	}
@@ -161,6 +163,14 @@ public class UserDto extends BaseDto<UserDto> {
 
 	public void setRoomChatId(Long roomChatId) {
 		this.roomChatId = roomChatId;
+	}
+
+	public boolean isBeFriendWidthSessionUser() {
+		return beFriendWidthSessionUser;
+	}
+
+	public void setBeFriendWidthSessionUser(boolean beFriendWidthSessionUser) {
+		this.beFriendWidthSessionUser = beFriendWidthSessionUser;
 	}
 
 }

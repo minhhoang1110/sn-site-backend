@@ -5,7 +5,7 @@ import java.util.List;
 import com.snsite.dto.FriendShipDto;
 
 public interface IFriendShipService {
-	public List<FriendShipDto> getListFriendShip();
+	public List<FriendShipDto> getListFriendShip(Long userId);
 
 	public List<FriendShipDto> getListRequestedFriendShip();
 
