@@ -1,5 +1,6 @@
 package com.snsite.service.implement;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -9,11 +10,13 @@ import org.springframework.stereotype.Service;
 
 import com.snsite.converter.UserConverter;
 import com.snsite.dto.FriendShipDto;
+import com.snsite.dto.RoomChatDto;
 import com.snsite.dto.UserDto;
 import com.snsite.entity.UserEntity;
 import com.snsite.helper.AuthenticationHelper;
 import com.snsite.repository.UserRepository;
 import com.snsite.service.IFriendShipService;
+import com.snsite.service.IRoomChatService;
 import com.snsite.service.IUserService;
 
 @Service
@@ -28,6 +31,8 @@ public class UserService implements IUserService {
 	private AuthenticationHelper authenticationHelper;
 	@Autowired
 	private IFriendShipService friendShipService;
+	@Autowired
+	private IRoomChatService roomChatService;
 
 	@Override
 	public UserDto getCurrentProfile() {
@@ -47,6 +52,7 @@ public class UserService implements IUserService {
 
 	@Override
 	public UserDto getUserDetail(Long id) {
+		UserEntity contextUser = authenticationHelper.getUserFromContext();
 		Optional<UserEntity> userEntity = userRepository.findById(id);
 		if (!userEntity.isPresent())
 			return null;
@@ -60,6 +66,11 @@ public class UserService implements IUserService {
 			}
 		}
 		userDto.setCountOfFriends(countOfFriends);
+		RoomChatDto roomChatDto = roomChatService.getRoomChatByChatUser(userDto.getId());
+		if (roomChatDto != null && contextUser.getId() != userDto.getId()) {
+			userDto.setChatWithSessionUser(true);
+			userDto.setRoomChatId(roomChatDto.getId());
+		}
 		return userDto;
 	}
 
@@ -92,7 +103,19 @@ public class UserService implements IUserService {
 		} else {
 			userEntities = userRepository.findAll();
 		}
-		return userConverter.toListDto(userEntities);
+		List<UserDto> userDtos = userConverter.toListDto(userEntities);
+		List<UserDto> result = new ArrayList<>();
+		if (userDtos != null && userDtos.size() > 0) {
+			for (UserDto userDto : userDtos) {
+				RoomChatDto roomChatDto = roomChatService.getRoomChatByChatUser(userDto.getId());
+				if (roomChatDto != null) {
+					userDto.setChatWithSessionUser(true);
+					userDto.setRoomChatId(roomChatDto.getId());
+				}
+				result.add(userDto);
+			}
+		}
+		return result;
 	}
 
 	@Override

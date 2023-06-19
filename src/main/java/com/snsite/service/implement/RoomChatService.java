@@ -60,7 +60,7 @@ public class RoomChatService implements IRoomChatService {
 		UserEntity contextUser = authenticationHelper.getUserFromContext();
 		if (!checkUserJoinRoomChat(roomChatEntity.getUserIds().split(","), contextUser.getId().toString()))
 			return null;
-		messageService.readAllMessageByRoomChatId(roomChatEntity.getId());
+		messageService.readAllMessageByRoomChat(roomChatEntity);
 		return roomChatConverter.toDto(roomChatEntity);
 	}
 
@@ -103,6 +103,24 @@ public class RoomChatService implements IRoomChatService {
 		} catch (Exception e) {
 			return false;
 		}
+	}
+
+	@Override
+	public RoomChatDto getRoomChatByChatUser(Long userId) {
+		List<RoomChatDto> roomChatDtos = this.getListRoomChat();
+		UserEntity contextUser = authenticationHelper.getUserFromContext();
+		RoomChatDto result = null;
+		if (roomChatDtos != null && roomChatDtos.size() > 0) {
+			for (RoomChatDto roomChatDto : roomChatDtos) {
+				boolean isContextUserJoined = checkUserJoinRoomChat(roomChatDto.getUserIds().split(","),
+						contextUser.getId().toString());
+				boolean isChatUserJoined = checkUserJoinRoomChat(roomChatDto.getUserIds().split(","),
+						userId.toString());
+				if (isChatUserJoined && isContextUserJoined)
+					result = roomChatDto;
+			}
+		}
+		return result;
 	}
 
 }

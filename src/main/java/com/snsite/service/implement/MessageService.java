@@ -96,13 +96,18 @@ public class MessageService implements IMessageService {
 	}
 
 	@Override
-	public void readAllMessageByRoomChatId(Long roomId) {
+	public void readAllMessageByRoomChat(RoomChatEntity roomChatEntity) {
 		try {
-			customMessageRepository.readAllMessageByRoomId(roomId);
+			List<MessageEntity> messageEntities = messageRepository.findAllByRoomMessage(roomChatEntity);
+			if (messageEntities.size() > 0) {
+				for (MessageEntity messageEntity : messageEntities) {
+					messageEntity.setIsRead(true);
+					messageRepository.save(messageEntity);
+				}
+			}
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
-
 	}
 
 }

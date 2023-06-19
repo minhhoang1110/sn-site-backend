@@ -14,4 +14,6 @@ public interface IRoomChatService {
 	public boolean deleteRoomChat(Long id);
 
 	public boolean checkUserJoinRoomChat(String[] userIds, String userId);
+
+	public RoomChatDto getRoomChatByChatUser(Long userId);
 }

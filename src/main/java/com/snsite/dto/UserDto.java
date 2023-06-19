@@ -31,6 +31,10 @@ public class UserDto extends BaseDto<UserDto> {
 
 	private int countOfFriends;
 
+	private boolean isChatWithSessionUser = false;
+
+	private Long roomChatId;
+
 	public String getUsername() {
 		return username;
 	}
@@ -141,6 +145,22 @@ public class UserDto extends BaseDto<UserDto> {
 
 	public void setCountOfFriends(int countOfFriends) {
 		this.countOfFriends = countOfFriends;
+	}
+
+	public boolean isChatWithSessionUser() {
+		return isChatWithSessionUser;
+	}
+
+	public void setChatWithSessionUser(boolean isChatWithSessionUser) {
+		this.isChatWithSessionUser = isChatWithSessionUser;
+	}
+
+	public Long getRoomChatId() {
+		return roomChatId;
+	}
+
+	public void setRoomChatId(Long roomChatId) {
+		this.roomChatId = roomChatId;
 	}
 
 }
