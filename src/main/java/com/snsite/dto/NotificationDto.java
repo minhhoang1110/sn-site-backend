@@ -8,9 +8,9 @@ public class NotificationDto extends BaseDto<NotificationDto> {
 	private UserDto user;
 	private Long fromUserId;
 	private UserDto fromUser;
-	private boolean isRead;
+	private boolean isRead = false;
 
-	private Integer type;
+	private String type;
 
 	private Long objectId;
 
@@ -102,11 +102,11 @@ public class NotificationDto extends BaseDto<NotificationDto> {
 		this.isRead = isRead;
 	}
 
-	public int getType() {
+	public String getType() {
 		return type;
 	}
 
-	public void setType(int type) {
+	public void setType(String type) {
 		this.type = type;
 	}
 

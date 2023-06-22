@@ -10,8 +10,8 @@ import javax.validation.constraints.NotNull;
 @Table(name = "files")
 public class FileEntity extends BaseEntity {
 	@Column
-	@NotNull(message = "ObjectId must not be empty")
-	private Long objectId;
+	@NotNull(message = "userId must not be empty")
+	private Long userId;
 	@Column
 	@NotNull(message = "FileType must not be empty")
 	private Integer fileType;
@@ -22,12 +22,12 @@ public class FileEntity extends BaseEntity {
 	@NotBlank(message = "Url must not be empty")
 	private String url;
 
-	public Long getObjectId() {
-		return objectId;
+	public Long getUserId() {
+		return userId;
 	}
 
-	public void setObjectId(Long objectId) {
-		this.objectId = objectId;
+	public void setUserId(Long userId) {
+		this.userId = userId;
 	}
 
 	public int getFileType() {

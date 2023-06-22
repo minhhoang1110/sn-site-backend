@@ -3,7 +3,7 @@ package com.snsite.dto;
 import java.util.HashMap;
 
 public class FileDto extends BaseDto<FileDto> {
-	private Long objectId;
+	private Long userId;
 
 	private String fileType;
 
@@ -12,7 +12,7 @@ public class FileDto extends BaseDto<FileDto> {
 	private String url;
 
 	public static Integer FileTypeImage = 0;
-	public HashMap<String, Integer> FileTypeToId = new HashMap<String, Integer>() {
+	public static HashMap<String, Integer> FileTypeToId = new HashMap<String, Integer>() {
 		/**
 		 * 
 		 */
@@ -22,7 +22,7 @@ public class FileDto extends BaseDto<FileDto> {
 			put("FileTypeImage", 0);
 		}
 	};
-	public HashMap<Integer, String> FileTypeToString = new HashMap<Integer, String>() {
+	public static HashMap<Integer, String> FileTypeToString = new HashMap<Integer, String>() {
 		/**
 		 * 
 		 */
@@ -38,7 +38,7 @@ public class FileDto extends BaseDto<FileDto> {
 	public static Integer ObjectTypeRoomChat = 2;
 	public static Integer ObjectTypeMessage = 3;
 	public static Integer ObjectTypePost = 4;
-	public HashMap<String, Integer> ObjectTypeToId = new HashMap<String, Integer>() {
+	public static HashMap<String, Integer> ObjectTypeToId = new HashMap<String, Integer>() {
 		/**
 		 * 
 		 */
@@ -52,7 +52,7 @@ public class FileDto extends BaseDto<FileDto> {
 			put("ObjectTypePost", 4);
 		}
 	};
-	public HashMap<Integer, String> ObjectTypeToString = new HashMap<Integer, String>() {
+	public static HashMap<Integer, String> ObjectTypeToString = new HashMap<Integer, String>() {
 		/**
 		 * 
 		 */
@@ -67,12 +67,12 @@ public class FileDto extends BaseDto<FileDto> {
 		}
 	};
 
-	public Long getObjectId() {
-		return objectId;
+	public Long getUserId() {
+		return userId;
 	}
 
-	public void setObjectId(Long objectId) {
-		this.objectId = objectId;
+	public void setUserId(Long userId) {
+		this.userId = userId;
 	}
 
 	public String getFileType() {

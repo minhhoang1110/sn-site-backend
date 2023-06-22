@@ -4,7 +4,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 public class UploadFileRequest {
 	private MultipartFile file;
-	private String type;
+	private String fileType;
+	private String objectType;
+	private Long userId;
 
 	public MultipartFile getFile() {
 		return file;
@@ -14,12 +16,28 @@ public class UploadFileRequest {
 		this.file = file;
 	}
 
-	public String getType() {
-		return type;
+	public String getFileType() {
+		return fileType;
 	}
 
-	public void setType(String type) {
-		this.type = type;
+	public void setFileType(String fileType) {
+		this.fileType = fileType;
+	}
+
+	public String getObjectType() {
+		return objectType;
+	}
+
+	public void setObjectType(String objectType) {
+		this.objectType = objectType;
+	}
+
+	public Long getUserId() {
+		return userId;
+	}
+
+	public void setUserId(Long userId) {
+		this.userId = userId;
 	}
 
 }
