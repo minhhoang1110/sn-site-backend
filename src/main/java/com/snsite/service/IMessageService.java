@@ -13,4 +13,6 @@ public interface IMessageService {
 	public boolean deleteMessage(Long messageId);
 
 	public void readAllMessageByRoomChat(RoomChatEntity roomChatEntity);
+
+	public boolean checkUnreadMessageByRoomChat(RoomChatEntity roomChatEntity);
 }

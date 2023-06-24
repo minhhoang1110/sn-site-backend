@@ -3,13 +3,18 @@ package com.snsite.converter;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.snsite.dto.RoomChatDto;
 import com.snsite.entity.RoomChatEntity;
+import com.snsite.service.IMessageService;
 
 @Component
 public class RoomChatConverter {
+	@Autowired
+	private IMessageService messageService;
+
 	public RoomChatEntity toEntity(RoomChatDto roomChatDto) {
 		RoomChatEntity roomChatEntity = new RoomChatEntity();
 		roomChatEntity.setUserIds(roomChatDto.getUserIds());
@@ -34,6 +39,7 @@ public class RoomChatConverter {
 		roomChatDto.setUserIds(roomChatEntity.getUserIds());
 		roomChatDto.setRoomType(RoomChatDto.RoomTypeToString.get(roomChatEntity.getRoomType()));
 		roomChatDto.setThumbnailUrl(roomChatEntity.getThumbnailUrl());
+		roomChatDto.setHasUnreadMessage(messageService.checkUnreadMessageByRoomChat(roomChatEntity));
 		return roomChatDto;
 	}
 

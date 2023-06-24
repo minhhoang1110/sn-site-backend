@@ -17,14 +17,16 @@ public class CustomPostRepository implements ICustomPostRepository {
 	private EntityManager entityManager;
 
 	@Override
-	public List<PostEntity> findAllAvailablePost() {
+	public List<PostEntity> findAllAvailablePost(Integer limit, Integer offset) {
 		List<PostEntity> postEntities = null;
 		try {
 			Query query = entityManager.createNativeQuery(
-					"select * from posts where shared_type=?0 or shared_type=?1 order by updated_at DESC",
+					"select * from posts where shared_type=?0 or shared_type=?1 order by updated_at DESC limit ?2 offset ?3",
 					PostEntity.class).unwrap(org.hibernate.query.Query.class);
 			query.setParameter(0, 0);
 			query.setParameter(1, 1);
+			query.setParameter(2, limit);
+			query.setParameter(3, offset);
 			postEntities = query.getResultList();
 		} catch (Exception e) {
 			System.out.println(e.getMessage());

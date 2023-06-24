@@ -15,7 +15,6 @@ import com.snsite.entity.UserEntity;
 import com.snsite.helper.AuthenticationHelper;
 import com.snsite.repository.MessageRepository;
 import com.snsite.repository.RoomChatRepository;
-import com.snsite.repository.customize.ICustomMessageRepository;
 import com.snsite.service.IMessageService;
 import com.snsite.service.IRoomChatService;
 import com.snsite.service.IUserService;
@@ -34,8 +33,6 @@ public class MessageService implements IMessageService {
 	private RoomChatRepository roomChatRepository;
 	@Autowired
 	private IRoomChatService roomChatService;
-	@Autowired
-	private ICustomMessageRepository customMessageRepository;
 
 	@Override
 	public List<MessageDto> getListMessage(Long roomId) {
@@ -107,6 +104,23 @@ public class MessageService implements IMessageService {
 			}
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
+		}
+	}
+
+	@Override
+	public boolean checkUnreadMessageByRoomChat(RoomChatEntity roomChatEntity) {
+		try {
+			List<MessageEntity> messageEntities = messageRepository.findAllByRoomMessage(roomChatEntity);
+			if (messageEntities.size() > 0) {
+				for (MessageEntity messageEntity : messageEntities) {
+					if (!messageEntity.getIsRead())
+						return true;
+				}
+			}
+			return false;
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			return false;
 		}
 	}
 

@@ -25,8 +25,10 @@ public class PostController {
 
 	@GetMapping(value = "/api/post")
 	@ResponseBody
-	public CommonRespone<List<PostDto>> getListPost(@RequestParam(value = "userId", required = false) Long userId) {
-		List<PostDto> postDtos = postService.getListPost(userId);
+	public CommonRespone<List<PostDto>> getListPost(@RequestParam(value = "userId", required = false) Long userId,
+			@RequestParam("limit") Integer limit, @RequestParam("offset") Integer offset,
+			@RequestParam("page") Integer page) {
+		List<PostDto> postDtos = postService.getListPost(userId, limit, offset, page);
 		int code = HttpServletResponse.SC_OK;
 		String message = "Fetch Successfully Posts";
 		boolean success = true;

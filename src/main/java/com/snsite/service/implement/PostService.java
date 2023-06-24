@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.snsite.converter.PostConverter;
@@ -57,12 +60,12 @@ public class PostService implements IPostService {
 	}
 
 	@Override
-	public List<PostDto> getListPost(Long userId) {
+	public List<PostDto> getListPost(Long userId, Integer limit, Integer offset, Integer page) {
 		UserEntity contextUser = authenticationHelper.getUserFromContext();
 		List<PostEntity> result = new ArrayList<>();
 		List<PostEntity> postEntities;
 		if (userId == null) {
-			postEntities = customPostRepository.findAllAvailablePost();
+			postEntities = customPostRepository.findAllAvailablePost(limit, offset);
 			for (PostEntity postEntity : postEntities) {
 				if (postEntity.getUserPost().getId() == contextUser.getId()) {
 					result.add(postEntity);
@@ -84,7 +87,8 @@ public class PostService implements IPostService {
 			if (!userEntity.isPresent()) {
 				return null;
 			}
-			postEntities = postRepository.findAllByUserPostOrderByUpdatedAtDesc(userEntity.get());
+			Pageable pageable = PageRequest.of(page, limit, Sort.by("updatedAt").descending());
+			postEntities = postRepository.findAllByUserPost(userEntity.get(), pageable);
 			result = postEntities;
 		}
 		List<PostDto> postDtos = new ArrayList<>();
