@@ -35,7 +35,7 @@ public class EmailService implements IEmailService {
 			String emailSubject = "Email Verification - SN Site";
 			CustomUserDetails customUserDetails = new CustomUserDetails(userEntity);
 			String emailToken = jwtTokenProvider.generateEmailToken(customUserDetails);
-			String callbackURL = "http://localhost:3000/verify-email?token=" + emailToken;
+			String callbackURL = System.getenv("FRONT_END_URL") + "/verify-email?token=" + emailToken;
 			String emailBody = "You requested for email verification.\nKindly use this link: " + callbackURL
 					+ " to verify your email address.";
 			SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
@@ -61,7 +61,7 @@ public class EmailService implements IEmailService {
 			String encodedPassword = passwordEncoder.encode(temporaryPassword);
 			userEntity.setPassword(encodedPassword);
 			userRepository.save(userEntity);
-			String callbackURL = "http://localhost:3000/reset-password?token=" + emailToken + "&email="
+			String callbackURL = System.getenv("FRONT_END_URL") + "/reset-password?token=" + emailToken + "&email="
 					+ userEntity.getEmail() + "&temporary_password=" + temporaryPassword;
 			String emailBody = "You requested for password resetting.\n";
 			emailBody += "Your temporary password: " + temporaryPassword + "\n";
