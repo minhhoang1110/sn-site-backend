@@ -197,15 +197,15 @@ public class AuthService implements IAuthService {
 		if (!validateSignup(userDto))
 			return null;
 		UserDto data = userService.saveUser(userDto);
-		UserEntity userEntity = userConverter.toEntity(data);
-		if (userEntity == null)
+		Optional<UserEntity> userEntity = userRepository.findById(data.getId());
+		if (!userEntity.isPresent())
 			return null;
-		CustomUserDetails customUserDetails = new CustomUserDetails(userEntity);
+		CustomUserDetails customUserDetails = new CustomUserDetails(userEntity.get());
 		String accessToken = jwtTokenProvider.generateAccessToken(customUserDetails);
 		String refreshToken = jwtTokenProvider.generateRefreshToken(customUserDetails);
-		RefreshTokenEntity refreshTokenEntity = new RefreshTokenEntity(userEntity.getId(), refreshToken);
+		RefreshTokenEntity refreshTokenEntity = new RefreshTokenEntity(userEntity.get().getId(), refreshToken);
 		refreshTokenEntity = refreshTokenService.saveRefreshToken(refreshTokenEntity);
-		return new UserWithToken(accessToken, refreshToken, userConverter.toDto(userEntity));
+		return new UserWithToken(accessToken, refreshToken, userConverter.toDto(userEntity.get()));
 	}
 
 }
