@@ -9,12 +9,14 @@ import org.springframework.stereotype.Service;
 
 import com.snsite.converter.FriendShipConverter;
 import com.snsite.dto.FriendShipDto;
+import com.snsite.dto.NotificationDto;
 import com.snsite.entity.FriendShipEntity;
 import com.snsite.entity.UserEntity;
 import com.snsite.helper.AuthenticationHelper;
 import com.snsite.repository.FriendShipRepository;
 import com.snsite.repository.UserRepository;
 import com.snsite.service.IFriendShipService;
+import com.snsite.service.INotificationService;
 
 @Service
 public class FriendShipService implements IFriendShipService {
@@ -26,6 +28,8 @@ public class FriendShipService implements IFriendShipService {
 	private UserRepository userRepository;
 	@Autowired
 	private AuthenticationHelper authenticationHelper;
+	@Autowired
+	private INotificationService notificationService;
 
 	@Override
 	public List<FriendShipDto> getListFriendShip(Long userId) {
@@ -71,6 +75,17 @@ public class FriendShipService implements IFriendShipService {
 			friendShipEntity = friendShipConverter.toEntity(friendShipDto);
 		}
 		friendShipEntity = friendShipRepository.save(friendShipEntity);
+		if (friendShipDto.getId() == null) {
+			notificationService.saveNotification(new NotificationDto(friendShipEntity.getSecondUserId(),
+					friendShipEntity.getUserFriendShip().getId(),
+					NotificationDto.TypeToString.get(NotificationDto.TypeRequestFriendShip), friendShipEntity.getId()));
+		}
+		if (friendShipDto.getId() != null && friendShipDto.getState()
+				.compareTo(FriendShipDto.StateToString.get(FriendShipDto.StateFriend)) == 0) {
+			notificationService.saveNotification(new NotificationDto(friendShipEntity.getSecondUserId(),
+					friendShipEntity.getUserFriendShip().getId(),
+					NotificationDto.TypeToString.get(NotificationDto.TypeAcceptFriendShip), friendShipEntity.getId()));
+		}
 		return friendShipConverter.toDto(friendShipEntity);
 	}
 

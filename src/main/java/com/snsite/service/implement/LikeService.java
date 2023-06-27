@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.snsite.converter.LikeConverter;
 import com.snsite.dto.LikeDto;
+import com.snsite.dto.NotificationDto;
 import com.snsite.entity.LikeEntity;
 import com.snsite.entity.PostEntity;
 import com.snsite.entity.UserEntity;
@@ -15,6 +16,7 @@ import com.snsite.helper.AuthenticationHelper;
 import com.snsite.repository.LikeRepository;
 import com.snsite.repository.PostRepository;
 import com.snsite.service.ILikeService;
+import com.snsite.service.INotificationService;
 
 @Service
 public class LikeService implements ILikeService {
@@ -26,6 +28,8 @@ public class LikeService implements ILikeService {
 	private AuthenticationHelper authenticationHelper;
 	@Autowired
 	private PostRepository postRepository;
+	@Autowired
+	private INotificationService notificationService;
 
 	@Override
 	public List<LikeDto> getListLike(Long postId) {
@@ -44,6 +48,8 @@ public class LikeService implements ILikeService {
 			return null;
 		likeEntity = likeConverter.toEntity(likeDto);
 		likeEntity = likeRepository.save(likeEntity);
+		notificationService.saveNotificationByPostId(likeEntity.getLikeOfPost().getId(),
+				likeEntity.getUserLike().getId(), NotificationDto.TypeLike);
 		return likeConverter.toDto(likeEntity);
 	}
 

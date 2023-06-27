@@ -1,11 +1,17 @@
 package com.snsite.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.List;
+
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
 import com.snsite.entity.NotificationEntity;
+import com.snsite.entity.UserEntity;
 
 @Repository
-public interface NotificationRepository extends JpaRepository<NotificationEntity, Long> {
+public interface NotificationRepository extends PagingAndSortingRepository<NotificationEntity, Long> {
+	List<NotificationEntity> findAllByUserNotification(UserEntity userEntity, Pageable pageable);
 
+	List<NotificationEntity> findAllByUserNotification(UserEntity userEntity);
 }

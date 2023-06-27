@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.snsite.converter.CommentConverter;
 import com.snsite.dto.CommentDto;
+import com.snsite.dto.NotificationDto;
 import com.snsite.entity.CommentEntity;
 import com.snsite.entity.PostEntity;
 import com.snsite.entity.UserEntity;
@@ -15,6 +16,7 @@ import com.snsite.helper.AuthenticationHelper;
 import com.snsite.repository.CommentRepository;
 import com.snsite.repository.PostRepository;
 import com.snsite.service.ICommentService;
+import com.snsite.service.INotificationService;
 
 @Service
 public class CommentService implements ICommentService {
@@ -26,6 +28,8 @@ public class CommentService implements ICommentService {
 	private AuthenticationHelper authenticationHelper;
 	@Autowired
 	private PostRepository postRepository;
+	@Autowired
+	private INotificationService notificationService;
 
 	@Override
 	public List<CommentDto> getListComment(Long postId) {
@@ -53,6 +57,10 @@ public class CommentService implements ICommentService {
 			commentEntity = commentConverter.toEntity(commentDto);
 		}
 		commentEntity = commentRepository.save(commentEntity);
+		if (commentDto.getId() == null) {
+			notificationService.saveNotificationByPostId(commentEntity.getPostComment().getId(),
+					commentEntity.getUserComment().getId(), NotificationDto.TypeComment);
+		}
 		return commentConverter.toDto(commentEntity);
 	}
 
