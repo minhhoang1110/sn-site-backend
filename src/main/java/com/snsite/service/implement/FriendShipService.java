@@ -82,8 +82,8 @@ public class FriendShipService implements IFriendShipService {
 		}
 		if (friendShipDto.getId() != null && friendShipDto.getState()
 				.compareTo(FriendShipDto.StateToString.get(FriendShipDto.StateFriend)) == 0) {
-			notificationService.saveNotification(new NotificationDto(friendShipEntity.getSecondUserId(),
-					friendShipEntity.getUserFriendShip().getId(),
+			notificationService.saveNotification(new NotificationDto(friendShipEntity.getUserFriendShip().getId(),
+					friendShipEntity.getSecondUserId(),
 					NotificationDto.TypeToString.get(NotificationDto.TypeAcceptFriendShip), friendShipEntity.getId()));
 		}
 		return friendShipConverter.toDto(friendShipEntity);
