@@ -2,6 +2,7 @@ package com.snsite.controller;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.snsite.dto.LikeDto;
+import com.snsite.logger.ILoggerService;
 import com.snsite.service.ILikeService;
 import com.snsite.type.respone.CommonRespone;
 
@@ -23,6 +25,8 @@ import com.snsite.type.respone.CommonRespone;
 public class LikeController {
 	@Autowired
 	private ILikeService likeService;
+	@Autowired
+	private ILoggerService loggerService;
 
 	@GetMapping(value = "/api/like")
 	@ResponseBody
@@ -32,7 +36,8 @@ public class LikeController {
 
 	@PostMapping(value = "/api/like")
 	@ResponseBody
-	public CommonRespone<LikeDto> createLike(@RequestBody LikeDto likeDto) {
+	public CommonRespone<LikeDto> createLike(@RequestBody LikeDto likeDto, HttpServletRequest request) {
+		loggerService.infoCallEndpoint(LikeController.class, request);
 		LikeDto data = likeService.saveLike(likeDto);
 		int code = HttpServletResponse.SC_OK;
 		String message = "Create Successfully Like";
@@ -42,6 +47,7 @@ public class LikeController {
 			message = "Create Like Error";
 			success = false;
 		}
+		loggerService.infoCompleteEndpoint(LikeController.class, request);
 		return new CommonRespone<LikeDto>(code, success, message, data);
 	}
 
@@ -53,7 +59,8 @@ public class LikeController {
 
 	@DeleteMapping(value = "/api/like/{id}")
 	@ResponseBody
-	public CommonRespone<LikeDto> deleteLike(@PathVariable Long id) {
+	public CommonRespone<LikeDto> deleteLike(@PathVariable Long id, HttpServletRequest request) {
+		loggerService.infoCallEndpoint(LikeController.class, request);
 		boolean data = likeService.deleteLike(id);
 		int code = HttpServletResponse.SC_OK;
 		String message = "Delete Successfully Like";
@@ -63,6 +70,7 @@ public class LikeController {
 			message = "Delete Like Error";
 			success = false;
 		}
+		loggerService.infoCompleteEndpoint(LikeController.class, request);
 		return new CommonRespone<LikeDto>(code, success, message, null);
 	}
 }
