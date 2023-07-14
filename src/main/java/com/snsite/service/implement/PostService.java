@@ -134,4 +134,30 @@ public class PostService implements IPostService {
 		return postConverter.toDto(postEntity);
 	}
 
+	@Override
+	public boolean deletePost(Long id) {
+		try {
+			Optional<PostEntity> postEntity = postRepository.findById(id);
+			if (!postEntity.isPresent()) {
+				return false;
+			}
+			List<LikeDto> likeDtos = likeService.getListLike(id);
+			if (likeDtos != null && likeDtos.size() > 0) {
+				for (LikeDto likeDto : likeDtos) {
+					likeService.deleteLike(likeDto.getId());
+				}
+			}
+			List<CommentDto> commentDtos = commentService.getListComment(id);
+			if (commentDtos != null && commentDtos.size() > 0) {
+				for (CommentDto commentDto : commentDtos) {
+					commentService.deleteComment(commentDto.getId());
+				}
+			}
+			postRepository.delete(postEntity.get());
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
 }

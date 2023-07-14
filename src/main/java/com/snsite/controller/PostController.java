@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -99,5 +100,22 @@ public class PostController {
 		}
 		loggerService.infoCompleteEndpoint(PostController.class, request);
 		return new CommonRespone<PostDto>(code, success, message, data);
+	}
+
+	@DeleteMapping(value = "/api/post/{id}")
+	@ResponseBody
+	public CommonRespone<PostDto> deletePost(@PathVariable("id") Long id, HttpServletRequest request) {
+		loggerService.infoCallEndpoint(PostController.class, request);
+		boolean result = postService.deletePost(id);
+		int code = HttpServletResponse.SC_OK;
+		String message = "Delete Successfully Post ";
+		boolean success = true;
+		if (!result) {
+			code = HttpServletResponse.SC_BAD_REQUEST;
+			message = "Delete Error Post ";
+			success = false;
+		}
+		loggerService.infoCompleteEndpoint(PostController.class, request);
+		return new CommonRespone<PostDto>(code, success, message, null);
 	}
 }

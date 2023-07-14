@@ -28,6 +28,7 @@ public class AuthController {
 	@Autowired
 	private ILoggerService loggerService;
 
+	@SuppressWarnings("unused")
 	@PostMapping(value = "/api/login")
 	@ResponseBody
 	public AuthRespone login(@RequestBody LoginRequest loginRequest, HttpServletRequest request) {
@@ -36,6 +37,11 @@ public class AuthController {
 		int code = HttpServletResponse.SC_OK;
 		String message = "Log in Successfully User " + userWithToken.getUser().getUsername();
 		boolean success = true;
+		if (userWithToken == null) {
+			code = HttpServletResponse.SC_BAD_REQUEST;
+			message = "Log in Error";
+			success = false;
+		}
 		loggerService.infoCompleteEndpoint(AuthController.class, request);
 		return new AuthRespone(code, success, message, userWithToken);
 	}
