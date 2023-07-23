@@ -5,16 +5,20 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.snsite.converter.FriendShipConverter;
 import com.snsite.dto.FriendShipDto;
+import com.snsite.dto.NotificationDto;
 import com.snsite.entity.FriendShipEntity;
 import com.snsite.entity.UserEntity;
 import com.snsite.helper.AuthenticationHelper;
 import com.snsite.repository.FriendShipRepository;
 import com.snsite.repository.UserRepository;
 import com.snsite.service.IFriendShipService;
+import com.snsite.service.INotificationService;
 
 @Service
 public class FriendShipService implements IFriendShipService {
@@ -26,7 +30,10 @@ public class FriendShipService implements IFriendShipService {
 	private UserRepository userRepository;
 	@Autowired
 	private AuthenticationHelper authenticationHelper;
+	@Autowired
+	private INotificationService notificationService;
 
+	@Cacheable(value = "cachedFriendship")
 	@Override
 	public List<FriendShipDto> getListFriendShip(Long userId) {
 		List<FriendShipEntity> friendShipEntities = new ArrayList<>();
@@ -50,6 +57,7 @@ public class FriendShipService implements IFriendShipService {
 		return friendShipConverter.toListDto(result);
 	}
 
+	@CacheEvict(value = { "cachedFriendship", "cachedRequestedFriendship" }, allEntries = true)
 	@Override
 	public FriendShipDto saveFriendShip(FriendShipDto friendShipDto) {
 		UserEntity userEntity = authenticationHelper.getUserFromContext();
@@ -71,6 +79,17 @@ public class FriendShipService implements IFriendShipService {
 			friendShipEntity = friendShipConverter.toEntity(friendShipDto);
 		}
 		friendShipEntity = friendShipRepository.save(friendShipEntity);
+		if (friendShipDto.getId() == null) {
+			notificationService.saveNotification(new NotificationDto(friendShipEntity.getSecondUserId(),
+					friendShipEntity.getUserFriendShip().getId(),
+					NotificationDto.TypeToString.get(NotificationDto.TypeRequestFriendShip), friendShipEntity.getId()));
+		}
+		if (friendShipDto.getId() != null && friendShipDto.getState()
+				.compareTo(FriendShipDto.StateToString.get(FriendShipDto.StateFriend)) == 0) {
+			notificationService.saveNotification(new NotificationDto(friendShipEntity.getUserFriendShip().getId(),
+					friendShipEntity.getSecondUserId(),
+					NotificationDto.TypeToString.get(NotificationDto.TypeAcceptFriendShip), friendShipEntity.getId()));
+		}
 		return friendShipConverter.toDto(friendShipEntity);
 	}
 
@@ -95,6 +114,7 @@ public class FriendShipService implements IFriendShipService {
 		return friendShipConverter.toDto(result);
 	}
 
+	@CacheEvict(value = { "cachedFriendship", "cachedRequestedFriendship" }, allEntries = true)
 	@Override
 	public boolean deleteFriendShip(Long id) {
 		Optional<FriendShipEntity> friendShipEntity = friendShipRepository.findById(id);
@@ -112,6 +132,7 @@ public class FriendShipService implements IFriendShipService {
 		}
 	}
 
+	@Cacheable(value = "cachedRequestedFriendship")
 	@Override
 	public List<FriendShipDto> getListRequestedFriendShip() {
 		UserEntity userEntity = authenticationHelper.getUserFromContext();

@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.snsite.converter.MessageConverter;
@@ -34,6 +36,7 @@ public class MessageService implements IMessageService {
 	@Autowired
 	private IRoomChatService roomChatService;
 
+	@Cacheable(value = "cachedMessage")
 	@Override
 	public List<MessageDto> getListMessage(Long roomId) {
 		Optional<RoomChatEntity> roomChatEntity = roomChatRepository.findById(roomId);
@@ -48,6 +51,7 @@ public class MessageService implements IMessageService {
 		return messageConverter.toListDto(messageEntities);
 	}
 
+	@CacheEvict(value = { "cachedMessage", "cachedNotification", "cachedRoomchat" }, allEntries = true)
 	@Override
 	public MessageDto saveMessage(MessageDto messageDto) {
 		UserEntity contextUser = authenticationHelper.getUserFromContext();
@@ -74,6 +78,7 @@ public class MessageService implements IMessageService {
 		return messageConverter.toDto(messageEntity);
 	}
 
+	@CacheEvict(value = { "cachedMessage", "cachedNotification", "cachedRoomchat" }, allEntries = true)
 	@Override
 	public boolean deleteMessage(Long messageId) {
 		try {

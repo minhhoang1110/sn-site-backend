@@ -10,4 +10,8 @@ public interface INotificationService {
 	public NotificationDto readNotification(Long id);
 
 	public List<NotificationDto> readAllListNotification();
+
+	public NotificationDto saveNotification(NotificationDto notificationDto);
+
+	public NotificationDto saveNotificationByPostId(Long postId, Long fromUserId, Integer type);
 }

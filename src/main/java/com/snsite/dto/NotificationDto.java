@@ -62,6 +62,18 @@ public class NotificationDto extends BaseDto<NotificationDto> {
 		}
 	};
 
+	public NotificationDto() {
+		super();
+	}
+
+	public NotificationDto(Long userId, Long fromUserId, String type, Long objectId) {
+		super();
+		this.userId = userId;
+		this.fromUserId = fromUserId;
+		this.type = type;
+		this.objectId = objectId;
+	}
+
 	public Long getUserId() {
 		return userId;
 	}

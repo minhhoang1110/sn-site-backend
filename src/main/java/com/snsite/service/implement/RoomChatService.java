@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.snsite.converter.RoomChatConverter;
@@ -42,6 +44,7 @@ public class RoomChatService implements IRoomChatService {
 		return checkUser;
 	}
 
+	@Cacheable(value = "cachedRoomchat")
 	@Override
 	public List<RoomChatDto> getListRoomChat() {
 		UserEntity contextUser = authenticationHelper.getUserFromContext();
@@ -51,6 +54,7 @@ public class RoomChatService implements IRoomChatService {
 		return roomChatConverter.toListDto(roomChatEntities);
 	}
 
+	@Cacheable(value = "cachedRoomchat", key = "#id")
 	@Override
 	public RoomChatDto getRoomChatDetail(Long id) {
 		Optional<RoomChatEntity> data = roomChatRepository.findById(id);
@@ -64,6 +68,7 @@ public class RoomChatService implements IRoomChatService {
 		return roomChatConverter.toDto(roomChatEntity);
 	}
 
+	@CacheEvict(value = "cachedRoomchat", allEntries = true)
 	@Override
 	public RoomChatDto saveRoomChat(RoomChatDto roomChatDto) {
 		RoomChatEntity roomChatEntity = new RoomChatEntity();
@@ -82,6 +87,7 @@ public class RoomChatService implements IRoomChatService {
 		return roomChatConverter.toDto(roomChatEntity);
 	}
 
+	@CacheEvict(value = "cachedRoomchat", allEntries = true)
 	@Override
 	public boolean deleteRoomChat(Long id) {
 		try {

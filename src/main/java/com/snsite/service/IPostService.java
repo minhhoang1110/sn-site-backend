@@ -10,4 +10,6 @@ public interface IPostService {
 	public PostDto getPostDetail(Long id);
 
 	public PostDto savePost(PostDto postDto);
+
+	public boolean deletePost(Long id);
 }
