@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.snsite.converter.LikeConverter;
@@ -31,6 +33,7 @@ public class LikeService implements ILikeService {
 	@Autowired
 	private INotificationService notificationService;
 
+	@Cacheable(value = "cachedLike")
 	@Override
 	public List<LikeDto> getListLike(Long postId) {
 		Optional<PostEntity> postEntity = postRepository.findById(postId);
@@ -40,6 +43,7 @@ public class LikeService implements ILikeService {
 		return likeConverter.toListDto(likeEntities);
 	}
 
+	@CacheEvict(value = { "cachedLike", "cachedPost", "cachedNotification" }, allEntries = true)
 	@Override
 	public LikeDto saveLike(LikeDto likeDto) {
 		LikeEntity likeEntity = new LikeEntity();
@@ -53,6 +57,7 @@ public class LikeService implements ILikeService {
 		return likeConverter.toDto(likeEntity);
 	}
 
+	@CacheEvict(value = { "cachedLike", "cachedPost", "cachedNotification" }, allEntries = true)
 	@Override
 	public boolean deleteLike(Long id) {
 		Optional<LikeEntity> likeEntity = likeRepository.findById(id);

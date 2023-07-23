@@ -74,6 +74,17 @@
 			<scope>runtime</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-redis</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>io.lettuce</groupId>
+			<artifactId>lettuce-core</artifactId>
+			<version>6.2.5.RELEASE</version><!--$NO-MVN-MAN-VER$-->
+		</dependency>
+
 	</dependencies>
 	<build>
 		<plugins>

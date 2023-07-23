@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -35,6 +37,7 @@ public class NotificationService implements INotificationService {
 	@Autowired
 	private UserRepository userRepository;
 
+	@Cacheable(value = "cachedNotification")
 	@Override
 	public List<NotificationDto> getListNotification() {
 		Pageable pageable = PageRequest.of(this.page, this.limit, Sort.by("updatedAt").descending());
@@ -71,6 +74,7 @@ public class NotificationService implements INotificationService {
 		return notificationConverter.toListDto(notificationEntities);
 	}
 
+	@CacheEvict(value = "cachedNotification", allEntries = true)
 	@Override
 	public NotificationDto saveNotification(NotificationDto notificationDto) {
 		notificationDto.setAction(NotificationDto.TypeToAction.get(notificationDto.getType()));

@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.snsite.converter.CommentConverter;
@@ -31,6 +33,7 @@ public class CommentService implements ICommentService {
 	@Autowired
 	private INotificationService notificationService;
 
+	@Cacheable(value = "cachedComment")
 	@Override
 	public List<CommentDto> getListComment(Long postId) {
 		Optional<PostEntity> postEntity = postRepository.findById(postId);
@@ -40,6 +43,7 @@ public class CommentService implements ICommentService {
 		return commentConverter.toListDto(commentEntities);
 	}
 
+	@CacheEvict(value = { "cachedComment", "cachedPost", "cachedNotification" }, allEntries = true)
 	@Override
 	public CommentDto saveComment(CommentDto commentDto) {
 		CommentEntity commentEntity = new CommentEntity();
@@ -64,6 +68,7 @@ public class CommentService implements ICommentService {
 		return commentConverter.toDto(commentEntity);
 	}
 
+	@CacheEvict(value = { "cachedComment", "cachedPost", "cachedNotification" }, allEntries = true)
 	@Override
 	public boolean deleteComment(Long id) {
 		Optional<CommentEntity> commentEntity = commentRepository.findById(id);

@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -59,6 +61,7 @@ public class PostService implements IPostService {
 		return postDto;
 	}
 
+	@Cacheable(value = "cachedPost")
 	@Override
 	public List<PostDto> getListPost(Long userId, Integer limit, Integer offset, Integer page) {
 		UserEntity contextUser = authenticationHelper.getUserFromContext();
@@ -98,6 +101,7 @@ public class PostService implements IPostService {
 		return postDtos;
 	}
 
+	@Cacheable(value = "cachedPost", key = "#id")
 	@Override
 	public PostDto getPostDetail(Long id) {
 		Optional<PostEntity> postEntity = postRepository.findById(id);
@@ -109,6 +113,7 @@ public class PostService implements IPostService {
 		return postDto;
 	}
 
+	@CacheEvict(value = "cachedPost", allEntries = true)
 	@Override
 	public PostDto savePost(PostDto postDto) {
 		PostEntity postEntity = new PostEntity();
@@ -134,6 +139,7 @@ public class PostService implements IPostService {
 		return postConverter.toDto(postEntity);
 	}
 
+	@CacheEvict(value = "cachedPost", allEntries = true)
 	@Override
 	public boolean deletePost(Long id) {
 		try {

@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.snsite.converter.FriendShipConverter;
@@ -31,6 +33,7 @@ public class FriendShipService implements IFriendShipService {
 	@Autowired
 	private INotificationService notificationService;
 
+	@Cacheable(value = "cachedFriendship")
 	@Override
 	public List<FriendShipDto> getListFriendShip(Long userId) {
 		List<FriendShipEntity> friendShipEntities = new ArrayList<>();
@@ -54,6 +57,7 @@ public class FriendShipService implements IFriendShipService {
 		return friendShipConverter.toListDto(result);
 	}
 
+	@CacheEvict(value = { "cachedFriendship", "cachedRequestedFriendship" }, allEntries = true)
 	@Override
 	public FriendShipDto saveFriendShip(FriendShipDto friendShipDto) {
 		UserEntity userEntity = authenticationHelper.getUserFromContext();
@@ -110,6 +114,7 @@ public class FriendShipService implements IFriendShipService {
 		return friendShipConverter.toDto(result);
 	}
 
+	@CacheEvict(value = { "cachedFriendship", "cachedRequestedFriendship" }, allEntries = true)
 	@Override
 	public boolean deleteFriendShip(Long id) {
 		Optional<FriendShipEntity> friendShipEntity = friendShipRepository.findById(id);
@@ -127,6 +132,7 @@ public class FriendShipService implements IFriendShipService {
 		}
 	}
 
+	@Cacheable(value = "cachedRequestedFriendship")
 	@Override
 	public List<FriendShipDto> getListRequestedFriendShip() {
 		UserEntity userEntity = authenticationHelper.getUserFromContext();
