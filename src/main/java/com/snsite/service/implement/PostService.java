@@ -61,7 +61,7 @@ public class PostService implements IPostService {
 		return postDto;
 	}
 
-	@Cacheable(value = "cachedPost")
+	@Cacheable(value = "cachedPosts")
 	@Override
 	public List<PostDto> getListPost(Long userId, Integer limit, Integer offset, Integer page) {
 		UserEntity contextUser = authenticationHelper.getUserFromContext();
@@ -113,7 +113,7 @@ public class PostService implements IPostService {
 		return postDto;
 	}
 
-	@CacheEvict(value = "cachedPost", allEntries = true)
+	@CacheEvict(value = "cachedPosts", allEntries = true)
 	@Override
 	public PostDto savePost(PostDto postDto) {
 		PostEntity postEntity = new PostEntity();
@@ -139,7 +139,7 @@ public class PostService implements IPostService {
 		return postConverter.toDto(postEntity);
 	}
 
-	@CacheEvict(value = "cachedPost", allEntries = true)
+	@CacheEvict(value = "cachedPosts", allEntries = true)
 	@Override
 	public boolean deletePost(Long id) {
 		try {

@@ -33,7 +33,7 @@ public class LikeService implements ILikeService {
 	@Autowired
 	private INotificationService notificationService;
 
-	@Cacheable(value = "cachedLike")
+	@Cacheable(value = "cachedLike", key = "#postId", condition = "#postId!=null")
 	@Override
 	public List<LikeDto> getListLike(Long postId) {
 		Optional<PostEntity> postEntity = postRepository.findById(postId);
@@ -43,7 +43,7 @@ public class LikeService implements ILikeService {
 		return likeConverter.toListDto(likeEntities);
 	}
 
-	@CacheEvict(value = { "cachedLike", "cachedPost", "cachedNotification" }, allEntries = true)
+	@CacheEvict(value = { "cachedLike", "cachedPosts", "cachedPost" }, allEntries = true)
 	@Override
 	public LikeDto saveLike(LikeDto likeDto) {
 		LikeEntity likeEntity = new LikeEntity();
@@ -57,7 +57,7 @@ public class LikeService implements ILikeService {
 		return likeConverter.toDto(likeEntity);
 	}
 
-	@CacheEvict(value = { "cachedLike", "cachedPost", "cachedNotification" }, allEntries = true)
+	@CacheEvict(value = { "cachedLike", "cachedPosts", "cachedPost" }, allEntries = true)
 	@Override
 	public boolean deleteLike(Long id) {
 		Optional<LikeEntity> likeEntity = likeRepository.findById(id);

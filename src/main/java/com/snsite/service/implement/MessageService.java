@@ -36,7 +36,7 @@ public class MessageService implements IMessageService {
 	@Autowired
 	private IRoomChatService roomChatService;
 
-	@Cacheable(value = "cachedMessage")
+	@Cacheable(value = "cachedMessage", key = "#roomId")
 	@Override
 	public List<MessageDto> getListMessage(Long roomId) {
 		Optional<RoomChatEntity> roomChatEntity = roomChatRepository.findById(roomId);
@@ -51,7 +51,7 @@ public class MessageService implements IMessageService {
 		return messageConverter.toListDto(messageEntities);
 	}
 
-	@CacheEvict(value = { "cachedMessage", "cachedNotification", "cachedRoomchat" }, allEntries = true)
+	@CacheEvict(value = { "cachedMessage", "cachedRoomchat" }, allEntries = true)
 	@Override
 	public MessageDto saveMessage(MessageDto messageDto) {
 		UserEntity contextUser = authenticationHelper.getUserFromContext();
@@ -78,7 +78,7 @@ public class MessageService implements IMessageService {
 		return messageConverter.toDto(messageEntity);
 	}
 
-	@CacheEvict(value = { "cachedMessage", "cachedNotification", "cachedRoomchat" }, allEntries = true)
+	@CacheEvict(value = { "cachedMessage", "cachedRoomchat" }, allEntries = true)
 	@Override
 	public boolean deleteMessage(Long messageId) {
 		try {

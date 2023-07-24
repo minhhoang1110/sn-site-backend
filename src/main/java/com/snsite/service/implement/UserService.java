@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -36,7 +35,6 @@ public class UserService implements IUserService {
 	@Autowired
 	private IRoomChatService roomChatService;
 
-	@Cacheable(value = "cachedUser")
 	@Override
 	public UserDto getCurrentProfile() {
 		UserEntity userEntity = authenticationHelper.getUserFromContext();
@@ -83,7 +81,6 @@ public class UserService implements IUserService {
 		return userDto;
 	}
 
-	@CacheEvict(value = "cachedUser", allEntries = true)
 	@Override
 	public UserDto saveUser(UserDto userDto) {
 		UserEntity userEntity = new UserEntity();
@@ -105,7 +102,7 @@ public class UserService implements IUserService {
 		return userConverter.toDto(userEntity);
 	}
 
-	@Cacheable(value = "cachedUser", key = "#keyword")
+	@Cacheable(value = "cachedUsers", key = "#keyword")
 	@Override
 	public List<UserDto> getListUser(String keyword) {
 		List<UserEntity> userEntities;

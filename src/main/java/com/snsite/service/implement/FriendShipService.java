@@ -33,7 +33,7 @@ public class FriendShipService implements IFriendShipService {
 	@Autowired
 	private INotificationService notificationService;
 
-	@Cacheable(value = "cachedFriendship")
+	@Cacheable(value = "cachedFriendship", key = "#userId", condition = "#userId!=null")
 	@Override
 	public List<FriendShipDto> getListFriendShip(Long userId) {
 		List<FriendShipEntity> friendShipEntities = new ArrayList<>();
@@ -57,7 +57,7 @@ public class FriendShipService implements IFriendShipService {
 		return friendShipConverter.toListDto(result);
 	}
 
-	@CacheEvict(value = { "cachedFriendship", "cachedRequestedFriendship" }, allEntries = true)
+	@CacheEvict(value = { "cachedFriendship" }, allEntries = true)
 	@Override
 	public FriendShipDto saveFriendShip(FriendShipDto friendShipDto) {
 		UserEntity userEntity = authenticationHelper.getUserFromContext();
@@ -114,7 +114,7 @@ public class FriendShipService implements IFriendShipService {
 		return friendShipConverter.toDto(result);
 	}
 
-	@CacheEvict(value = { "cachedFriendship", "cachedRequestedFriendship" }, allEntries = true)
+	@CacheEvict(value = { "cachedFriendship" }, allEntries = true)
 	@Override
 	public boolean deleteFriendShip(Long id) {
 		Optional<FriendShipEntity> friendShipEntity = friendShipRepository.findById(id);
@@ -132,7 +132,6 @@ public class FriendShipService implements IFriendShipService {
 		}
 	}
 
-	@Cacheable(value = "cachedRequestedFriendship")
 	@Override
 	public List<FriendShipDto> getListRequestedFriendShip() {
 		UserEntity userEntity = authenticationHelper.getUserFromContext();

@@ -33,7 +33,7 @@ public class CommentService implements ICommentService {
 	@Autowired
 	private INotificationService notificationService;
 
-	@Cacheable(value = "cachedComment")
+	@Cacheable(value = "cachedComment", key = "#postId", condition = "#postId!=null")
 	@Override
 	public List<CommentDto> getListComment(Long postId) {
 		Optional<PostEntity> postEntity = postRepository.findById(postId);
@@ -43,7 +43,7 @@ public class CommentService implements ICommentService {
 		return commentConverter.toListDto(commentEntities);
 	}
 
-	@CacheEvict(value = { "cachedComment", "cachedPost", "cachedNotification" }, allEntries = true)
+	@CacheEvict(value = { "cachedComment", "cachedPosts", "cachedPost" }, allEntries = true)
 	@Override
 	public CommentDto saveComment(CommentDto commentDto) {
 		CommentEntity commentEntity = new CommentEntity();
@@ -68,7 +68,7 @@ public class CommentService implements ICommentService {
 		return commentConverter.toDto(commentEntity);
 	}
 
-	@CacheEvict(value = { "cachedComment", "cachedPost", "cachedNotification" }, allEntries = true)
+	@CacheEvict(value = { "cachedComment", "cachedPosts", "cachedPost" }, allEntries = true)
 	@Override
 	public boolean deleteComment(Long id) {
 		Optional<CommentEntity> commentEntity = commentRepository.findById(id);
